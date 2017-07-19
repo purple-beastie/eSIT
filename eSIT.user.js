@@ -2,7 +2,7 @@
 // @name         eSIT: eSix Informative Thumbnails
 // @namespace    prplbst
 // @version      1.0.0
-// @description  A userscript which gives each Video, Flash, and Blacklisted thumbnails on e621.net a unique appearance while also adding helpful info overlays to them.
+// @description  Gives each Video, Flash, and Blacklisted thumbnail on e621.net a unique appearance while also adding helpful info overlays to them.
 // @author       purple.beastie
 // @match        https://e621.net/*
 // @match        https://e926.net/*
