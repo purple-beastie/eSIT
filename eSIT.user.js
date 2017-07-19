@@ -11,7 +11,7 @@
 // @grant        none
 // @require      https://cdn.jsdelivr.net/npm/jdenticon@1.6.0/dist/jdenticon.min.js
 // ==/UserScript==
-    
+
 /*
  *  License Information
  *
@@ -373,7 +373,6 @@
                     });
                 }
                 esitButton.appendChild(img);
-                //img.removeAttribute('title');
             }
         });
     }
