@@ -75,13 +75,6 @@
         '.thumb_avatar .esit-container {margin-bottom:3px}',
         '.esit-btn {width:100%;height:100%;border:0;padding:0;background:none;cursor:pointer;background:#000}',
 
-        '.esit-container:hover .esit-blacklist-items {opacity:1}',
-        '.esit-container:hover .esit-label-fade {opacity:0}',
-        '.esit-container:focus-within .esit-blacklist-items {opacity:1}',
-        '.esit-container:focus-within .esit-label-fade {opacity: 0}',
-        '.esit-btn:focus .esit-blacklist-items {opacity:1}', // fallback because focus-within is not well supported yet
-        '.esit-btn:focus .esit-label-fade {opacity:0}', // fallback
-
         '.esit-container img.esit-img {position:static;display: inline;padding:' + (150 - iconSize) / 2 + 'px;}',
         '.esit-placeholder {position:absolute;z-index:10;top:0;left:0;padding:0;pointer-events:none}',
 
@@ -97,6 +90,14 @@
         '.esit-label-video::before {content:"Video";}',
         '.esit-label-flash::before {content:"Flash";}',
         '.esit-label-deleted::before {content:"Deleted";}',
+
+        // Hover/focus fades
+        '.esit-container:hover .esit-label-fade {opacity:0}',
+        '.esit-container:focus-within .esit-label-fade {opacity: 0}',
+        '.esit-btn:focus .esit-label-fade {opacity:0}', // fallback because focus-within is not well supported yet
+        '.esit-container:hover .esit-blacklist-items {opacity:1}',
+        '.esit-container:focus-within .esit-blacklist-items {opacity:1}',
+        '.esit-btn:focus .esit-blacklist-items {opacity:1}', // fallback because focus-within is not well supported yet
 
         // Blacklist overlay
         '.esit-blacklist-items {opacity:0;transition: opacity 0.35s ease 0.18s;width: 140px; height: 140px;position: absolute;top:0;left:0;background: rgba(0,0,0,0.8);z-index:1;text-align:left;padding:5px;}',
