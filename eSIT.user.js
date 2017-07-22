@@ -95,16 +95,23 @@
         '.esit-container:hover .esit-label-fade {opacity:0}',
         '.esit-container:focus-within .esit-label-fade {opacity: 0}',
         '.esit-btn:focus .esit-label-fade {opacity:0}', // fallback because focus-within is not well supported yet
+        '.thumb_avatar .esit-label {opacity:0}',
+        '.thumb_avatar .esit-container:hover .esit-label-fade {opacity:1}',
+        '.thumb_avatar .esit-container:focus-within .esit-label-fade {opacity:1}',
+        '.thumb_avatar .esit-btn:focus .esit-label-fade {opacity:1}', // fallback because focus-within is not well supported yet
 
         // Blacklist overlay
         '.esit-blacklist-items {opacity:0;transition: opacity 0.35s ease 0.18s;width: 140px; height: 140px;position: absolute;top:0;left:0;background: rgba(0,0,0,0.8);z-index:1;text-align:left;padding:5px;}',
         '.esit-blacklist-items p {color:white;font-size:11px;overflow:hidden;}',
         '.esit-bl-tag {white-space: nowrap;}',
-        
+
         // Blacklist overlay fades
         '.esit-container:hover .esit-blacklist-items {opacity:1}',
         '.esit-container:focus-within .esit-blacklist-items {opacity:1}',
         '.esit-btn:focus .esit-blacklist-items {opacity:1}', // fallback because focus-within is not well supported yet
+        '.thumb_avatar .esit-container:hover .esit-blacklist-items {transition-delay: 1s}',
+        '.thumb_avatar .esit-container:focus-within .esit-blacklist-items {transition-delay: 1s}',
+        '.thumb_avatar .esit-btn:focus .esit-blacklist-items {transition-delay: 1s}', // fallback because focus-within is not well supported yet
 
         // Blacklist link
         '.esit-blacklist-link {width:100%;height:30px;position:absolute;bottom:0;left:0;z-index:2;background:#333;display:flex;justify-content:center;align-items:center;font-size:15px;transition:opacity 0.35s ease 0.2s,background-color 0.3s ease;opacity:0;border-top-left-radius:inherit;border-top-right-radius:inherit;}',
