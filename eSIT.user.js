@@ -111,7 +111,7 @@
         '.esit-blacklist-link:active {background:#555;}',
 
         '.esit-preview-bg {background:hsla(0,0%,100%,0.12) !important}',
-        '.esit-preview-border {width: 100%;height: 100%;box-sizing: border-box;border: 2px #600 solid;position: absolute;z-index:3;left: 0;top: 0;border-radius: inherit;pointer-events:none;}',
+        '.esit-preview-border {width: 100%;height: 100%;box-sizing: border-box;border: 1px #B00 solid;position: absolute;z-index:3;left: 0;top: 0;border-radius: inherit;pointer-events:none;}',
 
         '.esit-fader {transition: opacity 0.7s ease}',
         '.esit-fade {opacity: 0}',
