@@ -373,6 +373,13 @@
                                     img.classList.toggle('esit-hide');
                                     preview.classList.toggle('esit-hide');
                                     thumbButton.classList.toggle('esit-preview-bg');
+                                } else {
+                                    var typeLabel = thumb.querySelector('.esit-label:not(.esit-label-blacklist)');
+                                    if (typeLabel.classList.contains('esit-label-fade')) {
+                                        typeLabel.classList.remove('esit-label-fade');
+                                    } else {
+                                        setTimeout(function(){typeLabel.classList.add('esit-label-fade');}, 1000);
+                                    }
                                 }
                                 esitText.title = esitText.title ? "" : link.title;
                                 for (var i=0; i < toToggle.length; i++) {
