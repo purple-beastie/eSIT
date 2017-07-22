@@ -75,12 +75,16 @@
         '.thumb_avatar .esit-container {margin-bottom:3px}',
         '.esit-btn {width:100%;height:100%;border:0;padding:0;background:none;cursor:pointer;background:#000}',
 
+        '.esit-label-blacklist ~ .esit-label {opacity:0}',
         '.esit-container:hover .esit-blacklist-items {opacity:1}',
-        '.esit-container:hover .esit-label-blacklist {opacity:0}',
+        '.esit-container:hover .esit-label {opacity:0}',
+        '.esit-container:hover .esit-label-blacklist ~ .esit-label {opacity:1}',
         '.esit-container:focus-within .esit-blacklist-items {opacity:1}',
-        '.esit-container:focus-within .esit-label-blacklist {opacity: 0}',
+        '.esit-container:focus-within .esit-label {opacity: 0}',
+        '.esit-container:focus-within .esit-label-blacklist ~ .esit-label {opacity: 1}',
         '.esit-btn:focus .esit-blacklist-items {opacity:1}', // fallback because focus-within is not well supported yet
-        '.esit-btn:focus .esit-label-blacklist {opacity:0}', // fallback
+        '.esit-btn:focus .esit-label {opacity:0}', // fallback
+        '.esit-btn:focus .esit-label-blacklist ~ .esit-label {opacity:1}', // fallback
 
         '.esit-container img.esit-img {position:static;display: inline;padding:' + (150 - iconSize) / 2 + 'px;}',
         '.esit-placeholder {position:absolute;z-index:10;top:0;left:0;padding:0;pointer-events:none}',
@@ -333,7 +337,7 @@
                     var blacklistLabel = document.createElement("span");
                     blacklistLabel.className = 'esit-label esit-label-blacklist';
                     blacklistLabel.innerHTML = 'Blacklisted';
-                    esitText.appendChild(blacklistLabel);
+                    esitText.insertAdjacentElement('afterbegin', blacklistLabel);
 
                     var blacklistedFor = document.createElement("div");
                     blacklistedFor.className = 'esit-blacklist-items';
@@ -344,7 +348,7 @@
                     }
                     esitText.removeAttribute("title");
 
-                    esitText.appendChild(blacklistedFor);
+                    blacklistLabel.insertAdjacentElement('afterend', blacklistedFor);
                     esitButton.addEventListener("click", function (event) {
                         if (event.button === 0) {
                             event.preventDefault();
