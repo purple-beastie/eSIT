@@ -76,11 +76,11 @@
         '.esit-btn {width:100%;height:100%;border:0;padding:0;background:none;cursor:pointer;background:#000}',
 
         '.esit-container:hover .esit-blacklist-items {opacity:1}',
-        '.esit-container:hover .esit-label-blacklist {opacity:0}',
+        '.esit-container:hover .esit-label-fade {opacity:0}',
         '.esit-container:focus-within .esit-blacklist-items {opacity:1}',
-        '.esit-container:focus-within .esit-label-blacklist {opacity: 0}',
+        '.esit-container:focus-within .esit-label-fade {opacity: 0}',
         '.esit-btn:focus .esit-blacklist-items {opacity:1}', // fallback because focus-within is not well supported yet
-        '.esit-btn:focus .esit-label-blacklist {opacity:0}', // fallback
+        '.esit-btn:focus .esit-label-fade {opacity:0}', // fallback
 
         '.esit-container img.esit-img {position:static;display: inline;padding:' + (150 - iconSize) / 2 + 'px;}',
         '.esit-placeholder {position:absolute;z-index:10;top:0;left:0;padding:0;pointer-events:none}',
@@ -265,7 +265,7 @@
 
                 if (needsTypeThumb) {
                     var typeLabel = document.createElement("span");
-                    typeLabel.className = 'esit-label';
+                    typeLabel.className = 'esit-label esit-label-fade';
                     esitText.appendChild(typeLabel);
                     esitText.title = img.title;
 
@@ -282,6 +282,7 @@
 
                         if (needsBlacklistThumb) {
                             typeLabel.classList.add('esit-hide');
+                            typeLabel.classList.remove('esit-label-fade');
                             postFileSize.classList.add('esit-hide');
                             postDimensions.classList.add('esit-hide');
                         }
@@ -331,7 +332,7 @@
                     esitContainer.appendChild(previewBorder);
 
                     var blacklistLabel = document.createElement("span");
-                    blacklistLabel.className = 'esit-label esit-label-blacklist';
+                    blacklistLabel.className = 'esit-label esit-label-blacklist esit-label-fade';
                     blacklistLabel.innerHTML = 'Blacklisted';
                     esitText.appendChild(blacklistLabel);
 
