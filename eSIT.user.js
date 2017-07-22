@@ -106,6 +106,7 @@
         // Blacklist link
         '.esit-blacklist-link {width:100%;height:30px;position:absolute;bottom:0;left:0;z-index:2;background:#333;display:flex;justify-content:center;align-items:center;font-size:15px;transition:opacity 0.35s ease 0.2s,background-color 0.3s ease;opacity:0;border-top-left-radius:inherit;border-top-right-radius:inherit;}',
         'a:link .esit-blacklist-link, a:visited .esit-blacklist-link, a:focus .esit-blacklist-link {color:white}',
+        'a:focus .esit-blacklist-link:not(:active):hover {text-decoration:underline}',
         '.esit-blacklist-link:hover, a:focus .esit-blacklist-link {opacity:1}',
         '.esit-blacklist-link:active {background:#555;}',
 
