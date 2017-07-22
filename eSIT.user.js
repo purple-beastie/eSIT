@@ -401,6 +401,20 @@
                     esitButton.addEventListener("mouseup", function (event) {
                         event.currentTarget.blur();
                     });
+                    if (thumb.classList.contains('thumb_avatar')) {
+                        blacklistLabel.classList.remove('esit-label-fade');
+                        var fadeOutTimer;
+                        var fadeInOut = function (event) {
+                            blacklistLabel.classList.add('esit-label-fade');
+                            // 900ms = avatar overlay transition delay - (normal overlay transition delay - normal label delay)
+                            fadeOutTimer = setTimeout(function(){blacklistLabel.classList.remove('esit-label-fade');}, 900);
+
+                        };
+                        esitContainer.addEventListener("mouseenter", fadeInOut);
+                        esitContainer.addEventListener("focus", fadeInOut);
+                        esitContainer.addEventListener("mouseleave", function(){clearTimeout(fadeOutTimer);});
+                        esitContainer.addEventListener("blur", function(){clearTimeout(fadeOutTimer);});
+                    }
                 }
                 esitButton.appendChild(img);
             }
