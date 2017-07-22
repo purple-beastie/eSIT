@@ -99,7 +99,7 @@
         '.esit-label-deleted::before {content:"Deleted";}',
 
         // Blacklist overlay
-        '.esit-blacklist-items {opacity:0;transition: opacity 0.35s ease 0.18s;width: 140px; height: 140px;position: absolute;top:0;background: rgba(0,0,0,0.8);z-index:1;text-align:left;padding:5px;}',
+        '.esit-blacklist-items {opacity:0;transition: opacity 0.35s ease 0.18s;width: 140px; height: 140px;position: absolute;top:0;left:0;background: rgba(0,0,0,0.8);z-index:1;text-align:left;padding:5px;}',
         '.esit-blacklist-items p {color:white;font-size:11px;overflow:hidden;}',
         '.esit-bl-tag {white-space: nowrap;}',
 
