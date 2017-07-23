@@ -383,9 +383,6 @@
                             });
                         }
                     });
-                    esitButton.addEventListener("mouseup", function (event) {
-                        event.currentTarget.blur();
-                    });
                     if (thumb.classList.contains('thumb_avatar')) {
                         blacklistLabel.classList.remove('esit-label-fade');
                         var fadeOutTimer;
@@ -402,6 +399,9 @@
                     }
                 }
                 anchor.addEventListener("mouseup", function (event) {
+                    event.currentTarget.blur();
+                });
+                esitButton.addEventListener("mouseup", function (event) {
                     event.currentTarget.blur();
                 });
                 esitButton.appendChild(img);
