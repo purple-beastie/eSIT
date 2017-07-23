@@ -401,6 +401,9 @@
                         anchor.addEventListener("focusout", function(){clearTimeout(fadeOutTimer);});
                     }
                 }
+                anchor.addEventListener("mouseup", function (event) {
+                    event.currentTarget.blur();
+                });
                 esitButton.appendChild(img);
             }
         });
