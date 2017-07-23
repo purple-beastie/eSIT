@@ -94,10 +94,10 @@
 
         // Label fades
         '.esit-container:hover .esit-label-fade {opacity:0}',
-        '.esit-btn:focus .esit-label-fade {opacity:0}',
+        '.esit-btn:focus .esit-label-fade, a:focus .esit-label-fade {opacity:0}',
         '.thumb_avatar .esit-label {opacity:0}',
         '.thumb_avatar .esit-container:hover .esit-label-fade {opacity:1}',
-        '.thumb_avatar .esit-btn:focus .esit-label-fade {opacity:1}',
+        '.thumb_avatar .esit-btn:focus .esit-label-fade, .thumb_avatar a:focus .esit-label-fade {opacity:1}',
 
         // Blacklist overlay
         '.esit-blacklist-items {opacity:0;transition: opacity 0.35s ease 0.18s;width: 140px; height: 140px;position: absolute;top:0;left:0;background: rgba(0,0,0,0.8);z-index:1;text-align:left;padding:5px;}',
@@ -106,9 +106,9 @@
 
         // Blacklist overlay fades
         '.esit-container:hover .esit-blacklist-items {opacity:1}',
-        '.esit-btn:focus .esit-blacklist-items {opacity:1}',
+        '.esit-btn:focus .esit-blacklist-items, a:focus .esit-blacklist-items {opacity:1}',
         '.thumb_avatar .esit-container:hover .esit-blacklist-items {transition-delay: 1s}',
-        '.thumb_avatar .esit-btn:focus .esit-blacklist-items {transition-delay: 1s}',
+        '.thumb_avatar .esit-btn:focus .esit-blacklist-items, .thumb_avatar a:focus .esit-blacklist-items {transition-delay: 1s}',
 
         // Blacklist link
         '.esit-blacklist-link {width:100%;height:30px;position:absolute;bottom:0;left:0;z-index:2;background:#333;display:flex;justify-content:center;align-items:center;font-size:15px;transition:opacity 0.35s ease 0.2s,background-color 0.3s ease;opacity:0;border-top-left-radius:inherit;border-top-right-radius:inherit;}',
@@ -396,9 +396,9 @@
 
                         };
                         esitContainer.addEventListener("mouseenter", fadeInOut);
-                        esitContainer.addEventListener("focus", fadeInOut);
+                        anchor.addEventListener("focusin", fadeInOut);
                         esitContainer.addEventListener("mouseleave", function(){clearTimeout(fadeOutTimer);});
-                        esitContainer.addEventListener("blur", function(){clearTimeout(fadeOutTimer);});
+                        anchor.addEventListener("focusout", function(){clearTimeout(fadeOutTimer);});
                     }
                 }
                 esitButton.appendChild(img);
