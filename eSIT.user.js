@@ -75,13 +75,6 @@
         '.thumb_avatar .esit-container {margin-bottom:3px}',
         '.esit-btn {width:100%;height:100%;border:0;padding:0;background:none;cursor:pointer;background:#000}',
 
-        '.esit-container:hover .esit-blacklist-items {opacity:1}',
-        '.esit-container:hover .esit-label-blacklist {opacity:0}',
-        '.esit-container:focus-within .esit-blacklist-items {opacity:1}',
-        '.esit-container:focus-within .esit-label-blacklist {opacity: 0}',
-        '.esit-btn:focus .esit-blacklist-items {opacity:1}', // fallback because focus-within is not well supported yet
-        '.esit-btn:focus .esit-label-blacklist {opacity:0}', // fallback
-
         '.esit-container img.esit-img {position:static;display: inline;padding:' + (150 - iconSize) / 2 + 'px;}',
         '.esit-placeholder {position:absolute;z-index:10;top:0;left:0;padding:0;pointer-events:none}',
 
@@ -98,10 +91,27 @@
         '.esit-label-flash::before {content:"Flash";}',
         '.esit-label-deleted::before {content:"Deleted";}',
 
+        // Label fades
+        '.esit-container:hover .esit-label-fade {opacity:0}',
+        '.esit-container:focus-within .esit-label-fade {opacity: 0}',
+        '.esit-btn:focus .esit-label-fade {opacity:0}', // fallback because focus-within is not well supported yet
+        '.thumb_avatar .esit-label {opacity:0}',
+        '.thumb_avatar .esit-container:hover .esit-label-fade {opacity:1}',
+        '.thumb_avatar .esit-container:focus-within .esit-label-fade {opacity:1}',
+        '.thumb_avatar .esit-btn:focus .esit-label-fade {opacity:1}', // fallback because focus-within is not well supported yet
+
         // Blacklist overlay
         '.esit-blacklist-items {opacity:0;transition: opacity 0.35s ease 0.18s;width: 140px; height: 140px;position: absolute;top:0;left:0;background: rgba(0,0,0,0.8);z-index:1;text-align:left;padding:5px;}',
         '.esit-blacklist-items p {color:white;font-size:11px;overflow:hidden;}',
         '.esit-bl-tag {white-space: nowrap;}',
+
+        // Blacklist overlay fades
+        '.esit-container:hover .esit-blacklist-items {opacity:1}',
+        '.esit-container:focus-within .esit-blacklist-items {opacity:1}',
+        '.esit-btn:focus .esit-blacklist-items {opacity:1}', // fallback because focus-within is not well supported yet
+        '.thumb_avatar .esit-container:hover .esit-blacklist-items {transition-delay: 1s}',
+        '.thumb_avatar .esit-container:focus-within .esit-blacklist-items {transition-delay: 1s}',
+        '.thumb_avatar .esit-btn:focus .esit-blacklist-items {transition-delay: 1s}', // fallback because focus-within is not well supported yet
 
         // Blacklist link
         '.esit-blacklist-link {width:100%;height:30px;position:absolute;bottom:0;left:0;z-index:2;background:#333;display:flex;justify-content:center;align-items:center;font-size:15px;transition:opacity 0.35s ease 0.2s,background-color 0.3s ease;opacity:0;border-top-left-radius:inherit;border-top-right-radius:inherit;}',
@@ -264,7 +274,7 @@
 
                 if (needsTypeThumb) {
                     var typeLabel = document.createElement("span");
-                    typeLabel.className = 'esit-label';
+                    typeLabel.className = 'esit-label esit-label-fade';
                     esitText.appendChild(typeLabel);
                     esitText.title = img.title;
 
@@ -281,6 +291,7 @@
 
                         if (needsBlacklistThumb) {
                             typeLabel.classList.add('esit-hide');
+                            typeLabel.classList.remove('esit-label-fade');
                             postFileSize.classList.add('esit-hide');
                             postDimensions.classList.add('esit-hide');
                         }
@@ -319,7 +330,7 @@
                     esitContainer.appendChild(previewBorder);
 
                     var blacklistLabel = document.createElement("span");
-                    blacklistLabel.className = 'esit-label esit-label-blacklist';
+                    blacklistLabel.className = 'esit-label esit-label-blacklist esit-label-fade';
                     blacklistLabel.innerHTML = 'Blacklisted';
                     esitText.appendChild(blacklistLabel);
 
@@ -360,6 +371,13 @@
                                     img.classList.toggle('esit-hide');
                                     preview.classList.toggle('esit-hide');
                                     thumbButton.classList.toggle('esit-preview-bg');
+                                } else {
+                                    var typeLabel = thumb.querySelector('.esit-label:not(.esit-label-blacklist)');
+                                    if (typeLabel.classList.contains('esit-label-fade')) {
+                                        typeLabel.classList.remove('esit-label-fade');
+                                    } else {
+                                        setTimeout(function(){typeLabel.classList.add('esit-label-fade');}, 1000);
+                                    }
                                 }
                                 esitText.title = esitText.title ? "" : link.title;
                                 for (var i=0; i < toToggle.length; i++) {
@@ -371,6 +389,20 @@
                     esitButton.addEventListener("mouseup", function (event) {
                         event.currentTarget.blur();
                     });
+                    if (thumb.classList.contains('thumb_avatar')) {
+                        blacklistLabel.classList.remove('esit-label-fade');
+                        var fadeOutTimer;
+                        var fadeInOut = function (event) {
+                            blacklistLabel.classList.add('esit-label-fade');
+                            // 900ms = avatar overlay transition delay - (normal overlay transition delay - normal label delay)
+                            fadeOutTimer = setTimeout(function(){blacklistLabel.classList.remove('esit-label-fade');}, 900);
+
+                        };
+                        esitContainer.addEventListener("mouseenter", fadeInOut);
+                        esitContainer.addEventListener("focus", fadeInOut);
+                        esitContainer.addEventListener("mouseleave", function(){clearTimeout(fadeOutTimer);});
+                        esitContainer.addEventListener("blur", function(){clearTimeout(fadeOutTimer);});
+                    }
                 }
                 esitButton.appendChild(img);
             }
