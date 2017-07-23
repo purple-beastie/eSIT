@@ -308,17 +308,6 @@
                     link.classList.add('esit-blacklist-link');
                     esitContainer.appendChild(link);
                     link.title = img.title;
-                    var ignoreLeftClick = function(e) {
-                        if (e.button === 0) {
-                            e.preventDefault();
-                            anchor.blur();
-                            esitButton.click();
-                        }
-                    };
-                    link.addEventListener("mouseover", function() {
-                        link.addEventListener("click", ignoreLeftClick);
-                        setTimeout(function(){link.removeEventListener("click", ignoreLeftClick);}, 300);
-                    });
 
                     var previewBorder = document.createElement("span");
                     previewBorder.className = 'esit-preview-border esit-hide';
