@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         eSIT: eSix Informative Thumbnails
 // @namespace    prplbst
-// @version      1.1.0
+// @version      1.1.1
 // @description  Gives each Video, Flash, and Blacklisted thumbnail on e621.net a unique appearance while also adding helpful info overlays to them.
 // @author       purple.beastie
 // @updateURL    https://raw.githubusercontent.com/purple-beastie/eSIT/master/eSIT.meta.js
@@ -271,7 +271,7 @@
 
                 if (needsTypeThumb) {
                     var typeLabel = document.createElement("span");
-                    typeLabel.className = 'esit-label esit-label-fade';
+                    typeLabel.className = 'esit-label';
                     esitText.appendChild(typeLabel);
                     esitText.title = img.title;
 
@@ -288,9 +288,10 @@
 
                         if (needsBlacklistThumb) {
                             typeLabel.classList.add('esit-hide');
-                            typeLabel.classList.remove('esit-label-fade');
                             postFileSize.classList.add('esit-hide');
                             postDimensions.classList.add('esit-hide');
+                        } else {
+                            typeLabel.classList.add('esit-label-fade');
                         }
 
                         esitText.appendChild(postFileSize);
@@ -383,9 +384,6 @@
                             });
                         }
                     });
-                    esitButton.addEventListener("mouseup", function (event) {
-                        event.currentTarget.blur();
-                    });
                     if (thumb.classList.contains('thumb_avatar')) {
                         blacklistLabel.classList.remove('esit-label-fade');
                         var fadeOutTimer;
@@ -401,6 +399,12 @@
                         anchor.addEventListener("focusout", function(){clearTimeout(fadeOutTimer);});
                     }
                 }
+                anchor.addEventListener("mouseup", function (event) {
+                    event.currentTarget.blur();
+                });
+                esitButton.addEventListener("mouseup", function (event) {
+                    event.currentTarget.blur();
+                });
                 esitButton.appendChild(img);
             }
         });
