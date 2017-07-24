@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         eSIT: eSix Informative Thumbnails
 // @namespace    prplbst
-// @version      1.1.0
+// @version      1.1.1
 // @description  Gives each Video, Flash, and Blacklisted thumbnail on e621.net a unique appearance while also adding helpful info overlays to them.
 // @author       purple.beastie
 // @updateURL    https://raw.githubusercontent.com/purple-beastie/eSIT/master/eSIT.meta.js
