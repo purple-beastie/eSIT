@@ -271,7 +271,7 @@
 
                 if (needsTypeThumb) {
                     var typeLabel = document.createElement("span");
-                    typeLabel.className = 'esit-label esit-label-fade';
+                    typeLabel.className = 'esit-label';
                     esitText.appendChild(typeLabel);
                     esitText.title = img.title;
 
@@ -288,9 +288,10 @@
 
                         if (needsBlacklistThumb) {
                             typeLabel.classList.add('esit-hide');
-                            typeLabel.classList.remove('esit-label-fade');
                             postFileSize.classList.add('esit-hide');
                             postDimensions.classList.add('esit-hide');
+                        } else {
+                            typeLabel.classList.add('esit-label-fade');
                         }
 
                         esitText.appendChild(postFileSize);
