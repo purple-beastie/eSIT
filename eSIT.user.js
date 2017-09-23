@@ -130,7 +130,8 @@
         '#userpage div.userpage_right {margin-left: 172px}',
         '.thumbs-user.section, #userpage .thumb {width: 156px;}',
         '#userpage .thumb_avatar :not(.esit-container) img {margin-bottom:3px}',
-        '#userpage .level-blocked {padding-left: 5px; padding-right: 5px;}'
+        '#userpage .level-blocked {padding-left: 5px; padding-right: 5px;}',
+        'span.thumb a {display: inline;}'
     ].join("\n");
 
     var style = document.createElement("style");
