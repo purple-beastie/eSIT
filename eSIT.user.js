@@ -278,7 +278,7 @@
 
                     if (post.status === 'deleted') {
                         if (needsBlacklistThumb) typeLabel.classList.toggle('esit-hide');
-                        typeLabel.innerHTML = 'Deleted';
+                        typeLabel.textContent = 'Deleted';
                         typeLabel.classList.add('esit-label-deleted');
                     } else {
                         var postFileSize = document.createElement("span"),
@@ -297,15 +297,15 @@
 
                         esitText.appendChild(postFileSize);
                         esitText.appendChild(postDimensions);
-                        postFileSize.innerHTML = formatBytes(post.file_size, useBinaryUnits);
-                        postDimensions.innerHTML = post.width + "x" + post.height;
+                        postFileSize.textContent = formatBytes(post.file_size, useBinaryUnits);
+                        postDimensions.textContent = post.width + "x" + post.height;
                         switch (post.file_ext) {
                             case 'swf':
-                                typeLabel.innerHTML = 'Flash';
+                                typeLabel.textContent = 'Flash';
                                 typeLabel.classList.add('esit-label-flash');
                                 break;
                             default:
-                                typeLabel.innerHTML = 'Video';
+                                typeLabel.textContent = 'Video';
                                 typeLabel.classList.add('esit-label-video');
                         }
                     }
@@ -313,7 +313,7 @@
 
                 if (needsBlacklistThumb) {
                     var link = document.createElement("span");
-                    link.innerHTML = 'Link';
+                    link.textContent = 'Link';
                     link.classList.add('esit-blacklist-link');
                     esitContainer.appendChild(link);
                     link.title = img.title;
@@ -330,7 +330,7 @@
 
                     var blacklistLabel = document.createElement("span");
                     blacklistLabel.className = 'esit-label esit-label-blacklist esit-label-fade';
-                    blacklistLabel.innerHTML = 'Blacklisted';
+                    blacklistLabel.textContent = 'Blacklisted';
                     esitText.appendChild(blacklistLabel);
 
                     var blacklistedFor = document.createElement("div");
