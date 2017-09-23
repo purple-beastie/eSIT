@@ -122,6 +122,7 @@
         '.esit-fader {transition: opacity 0.7s ease}',
         '.esit-fade {opacity: 0}',
         '.esit-hide {display:none !important;}',
+        '.esit-opaque {opacity: 1 !important;}',
         'span.esit-container>button.esit-btn>img.esit-img-reset {' + propertiesToCopy.join(":initial !important;") + ':initial !important;}',
 
         // Adjust main CSS
