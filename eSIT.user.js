@@ -82,8 +82,8 @@
         // Text
         '.esit-text {color:white;transition: opacity 0.3s ease;width: 100%; height: 100%;z-index: 1;display:flex;justify-content:center;align-items:center;position:absolute;top:0;}',
         '.esit-label {transition:opacity 0.35s ease 0.08s;position:relative;font-size: 18px;font-weight: bold;letter-spacing:0.5px;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;}',
-        '.esit-file-size {position: absolute;bottom:2px;left:4px;}',
-        '.esit-dimensions {position: absolute;bottom:2px;right:4px;}',
+        '.esit-file-size {position: absolute;bottom:2px;left:4px;font-size:14px;}',
+        '.esit-dimensions {position: absolute;bottom:2px;right:4px;font-size:14px;}',
 
         // Outer text stroke workaround for labels
         '.esit-label::before {position:absolute;-webkit-text-stroke: 4px #000;text-stroke: 4px #000;left:0;z-index:-1;}',
