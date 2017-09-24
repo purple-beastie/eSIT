@@ -50,7 +50,10 @@
     var thumbCount = 0,
         thumbLimit = 1000, // maximum number of thumbs to process
         placeholderCount = 0,
-        allPlaceholders = [];
+        allPlaceholders = [],
+        allBlacklistOverlays,
+        allBlacklistLabels,
+        multiOverlayFlag = false;
     var propertiesToCopy = ["border-top-style",
                             "border-top-width",
                             "border-top-color",
@@ -177,6 +180,43 @@
                 callback( new Blob( [arr], {type: type || 'image/png'} ) );
             }
         });
+    }
+    function hoverAllBlacklisted(event) {
+        if (event.ctrlKey) {
+            for (var overlay of allBlacklistOverlays) {
+                overlay.classList.add('esit-opaque');
+            }
+            for (var label of allBlacklistLabels) {
+                label.classList.add('esit-fade');
+            }
+            multiOverlayFlag = true;
+            document.removeEventListener("keydown", hoverAllBlacklisted);
+        }
+    }
+    function unhoverAllBlacklisted(event) {
+        if (multiOverlayFlag) {
+            for (var overlay of allBlacklistOverlays) {
+                overlay.classList.remove('esit-opaque');
+            }
+            for (var label of allBlacklistLabels) {
+                label.classList.remove('esit-fade');
+            }
+            multiOverlayFlag = false;
+        }
+    }
+    function checkCtrlKey(event) {
+        if (!event.ctrlKey) {
+            unhoverAllBlacklisted(event);
+            document.addEventListener("keydown", hoverAllBlacklisted);
+        }
+    }
+    function addKeyListener(event) {
+        document.addEventListener("keydown", hoverAllBlacklisted);
+        document.addEventListener("keyup", checkCtrlKey);
+    }
+    function removeKeyListener(event) {
+        document.removeEventListener("keydown", hoverAllBlacklisted);
+        document.removeEventListener("keyup", checkCtrlKey);
     }
 
     function createInfoThumb(pair) {
@@ -386,6 +426,14 @@
                             });
                         }
                     });
+
+                    esitContainer.addEventListener("mouseenter", addKeyListener);
+                    anchor.addEventListener("focusin", addKeyListener);
+                    esitContainer.addEventListener("mouseleave", unhoverAllBlacklisted);
+                    anchor.addEventListener("focusout", unhoverAllBlacklisted);
+                    esitContainer.addEventListener("mouseleave", removeKeyListener);
+                    anchor.addEventListener("focusout", removeKeyListener);
+
                     if (thumb.classList.contains('thumb_avatar')) {
                         blacklistLabel.classList.remove('esit-label-fade');
                         var fadeOutTimer;
@@ -413,5 +461,7 @@
     }
     //timer();
     Post.posts.each(createInfoThumb);
+    allBlacklistOverlays = document.querySelectorAll('.esit-blacklist-items');
+    allBlacklistLabels = document.querySelectorAll('.esit-label-blacklist');
     //timer('All thumbs processed');
 })();
