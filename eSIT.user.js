@@ -389,15 +389,18 @@
 
                     esitText.appendChild(blacklistedFor);
                     esitButton.addEventListener("click", function (event) {
-                        if (event.button === 0) {
-                            event.preventDefault();
-                            thumbs.each(function(thumb) {
+                        if (event.button !== 0) {
+                            return;
+                        }
+                        event.preventDefault();
+                        var togglePreview = function (post, previewThumbs) {
+                            previewThumbs.each(function(thumb) {
                                 var thumbButton = thumb.down('.esit-btn');
                                 if (!thumbButton)
                                     return;
                                 var img = thumb.down('img.esit-img'),
                                     toToggle = thumb.querySelectorAll('.esit-label, .esit-file-size, .esit-dimensions, .esit-blacklist-items, .esit-preview-border');
-                                if (!needsTypeThumb) {
+                                if (post.file_ext !== 'webm' && post.file_ext !== 'swf' && post.status !== 'deleted') {
                                     var preview = thumb.down('.esit-preview');
                                     if (!preview) {
                                         preview = document.createElement("img");
@@ -428,9 +431,28 @@
                                     toToggle[i].classList.toggle('esit-hide');
                                 }
                             });
+                        };
+                        if(event.ctrlKey) {
+                            var targetThumbPreviewState = blacklistLabel.classList.contains('esit-hide');
+                            Post.posts.each(function(pair) {
+                                var post = pair.value;
+                                if (post.blacklisted.length === 0)
+                                    return;
+                                var postThumbs = $$("#p" + pair.key);
+                                if (postThumbs.length === 0)
+                                    return;
+                                var firstThumbBlacklistLabel = postThumbs[0].down('.esit-label-blacklist'),
+                                    previewState = firstThumbBlacklistLabel.classList.contains('esit-hide');
+
+                                if(targetThumbPreviewState == previewState) {
+                                    togglePreview(post, postThumbs);
+                                }
+                            });
+                        } else {
+                            togglePreview(post, thumbs);
                         }
                     });
-                    
+
                     esitContainer.addEventListener("mouseenter", function(e) {
                         thumbHovered = true;
                         addKeyListener(e);
