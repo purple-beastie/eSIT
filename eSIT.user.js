@@ -53,7 +53,9 @@
         allPlaceholders = [],
         allBlacklistOverlays,
         allBlacklistLabels,
-        multiOverlayFlag = false;
+        multiOverlayFlag = false,
+        thumbFocused = false,
+        thumbHovered = false;
     var propertiesToCopy = ["border-top-style",
                             "border-top-width",
                             "border-top-color",
@@ -426,13 +428,31 @@
                             });
                         }
                     });
-
-                    esitContainer.addEventListener("mouseenter", addKeyListener);
-                    anchor.addEventListener("focusin", addKeyListener);
-                    esitContainer.addEventListener("mouseleave", unhoverAllBlacklisted);
-                    anchor.addEventListener("focusout", unhoverAllBlacklisted);
-                    esitContainer.addEventListener("mouseleave", removeKeyListener);
-                    anchor.addEventListener("focusout", removeKeyListener);
+                    
+                    esitContainer.addEventListener("mouseenter", function(e) {
+                        thumbHovered = true;
+                        addKeyListener(e);
+                    });
+                    anchor.addEventListener("focusin", function(e) {
+                        thumbFocused = true;
+                        addKeyListener(e);
+                    });
+                    esitContainer.addEventListener("mouseleave", function(e) {
+                        thumbHovered = false;
+                        if(!thumbHovered && !thumbFocused) unhoverAllBlacklisted(e);
+                    });
+                    anchor.addEventListener("focusout", function(e) {
+                        thumbFocused = false;
+                        if(!thumbHovered && !thumbFocused) unhoverAllBlacklisted(e);
+                    });
+                    esitContainer.addEventListener("mouseleave", function(e) {
+                        thumbHovered = false;
+                        removeKeyListener(e);
+                    });
+                    anchor.addEventListener("focusout", function(e) {
+                        thumbFocused = false;
+                        removeKeyListener(e);
+                    });
 
                     if (thumb.classList.contains('thumb_avatar')) {
                         blacklistLabel.classList.remove('esit-label-fade');
