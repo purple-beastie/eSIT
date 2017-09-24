@@ -217,8 +217,10 @@
         document.addEventListener("keyup", checkCtrlKey);
     }
     function removeKeyListener(event) {
-        document.removeEventListener("keydown", hoverAllBlacklisted);
-        document.removeEventListener("keyup", checkCtrlKey);
+        if(!thumbFocused && !thumbHovered) {
+            document.removeEventListener("keydown", hoverAllBlacklisted);
+            document.removeEventListener("keyup", checkCtrlKey);
+        }
     }
 
     function createInfoThumb(pair) {
