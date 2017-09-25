@@ -271,6 +271,7 @@
                         brw = parseFloat(imgStyle.getPropertyValue('border-right-width'));
                     scoreWidth += blw + brw;
                     score.style.setProperty('width', scoreWidth + 'px');
+                    if(needsBlacklistThumb) score.style.setProperty('background-color', 'hsla(0, 100%, 23%, 0.6)');
                 }
 
                 // copy certain properties from the img
