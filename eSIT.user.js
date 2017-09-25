@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         eSIT: eSix Informative Thumbnails
 // @namespace    prplbst
-// @version      1.1.1
+// @version      1.2.0
 // @description  Gives each Video, Flash, and Blacklisted thumbnail on e621.net a unique appearance while also adding helpful info overlays to them.
 // @author       purple.beastie
 // @updateURL    https://raw.githubusercontent.com/purple-beastie/eSIT/master/eSIT.meta.js
@@ -50,7 +50,12 @@
     var thumbCount = 0,
         thumbLimit = 1000, // maximum number of thumbs to process
         placeholderCount = 0,
-        allPlaceholders = [];
+        allPlaceholders = [],
+        allBlacklistOverlays,
+        allBlacklistLabels,
+        multiOverlayFlag = false,
+        thumbFocused = false,
+        thumbHovered = false;
     var propertiesToCopy = ["border-top-style",
                             "border-top-width",
                             "border-top-color",
@@ -82,8 +87,16 @@
         // Text
         '.esit-text {color:white;transition: opacity 0.3s ease;width: 100%; height: 100%;z-index: 1;display:flex;justify-content:center;align-items:center;position:absolute;top:0;}',
         '.esit-label {transition:opacity 0.35s ease 0.08s;position:relative;font-size: 18px;font-weight: bold;letter-spacing:0.5px;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;}',
-        '.esit-file-size {position: absolute;bottom:2px;left:4px;}',
-        '.esit-dimensions {position: absolute;bottom:2px;right:4px;}',
+        '.esit-file-size {position: absolute;bottom:2px;left:4px;font-size:14px;}',
+        '.esit-dimensions {position: absolute;bottom:2px;right:4px;font-size:14px;}',
+
+        // Tag Icons
+        '.esit-tag-icon-box {position:absolute;top:2px;right:4px;height:14px;width:14px;}',
+        //'.esit-tag-icon {}',
+        '.esit-tag-icon-sound {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAAM1BMVEUAAAD///////////////////////////////////////////////////////////////+3leKCAAAAEHRSTlMAEB8gUGBwoK+wz9Df4O/wLoylUwAAAE1JREFUeF51zoEKgDAIBFC3yrVd1f3/12YolUDHgTwQVDxLzBCzbmKUkJOrCGk1YtST+pJtZn84cbN+uFv/loF6UNOhnt5AcYpSUlrgAhTzBRSiExLiAAAAAElFTkSuQmCC")}',
+        '.esit-tag-icon-nosound {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAHlBMVEUAAAD///////////////////////////////////8kfJuVAAAACXRSTlMAEGBwoM/Q0tPwH5urAAAAQ0lEQVQIW2NgYGBQYAADpgkQWhNCM80E0zM5Z05IFQwF05nl08C0xMxGMC0+sxAi3jEVTKcJpsH1wc1hYIbSDA5ADAAC1hcHYm+i5AAAAABJRU5ErkJggg==")}',
+        '.esit-tag-icon-soundwarning {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAD1BMVEUAAAD///////////////+PQt5oAAAABHRSTlMAYHCgAq13pAAAAC5JREFUCFtjYGBgEGAAA0YHCC3iwOAC4rqAaRcWImgGBA3TBzeHgQkizsBgAMQAEcEJXtpC/XAAAAAASUVORK5CYII=")}',
+        '.esit-tag-icon-inconsistentsound {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAMFBMVEUAAAD///////////////////////////////////////////////////////////87TQQwAAAAD3RSTlMAEDBgcH+AkKDAz9/g7/BQA5AnAAAATElEQVQIW2NgYGAwYAAD5g8Q2v4D0/5FQO7/DzzPXjP85///gb9gPphmM7wJphk4H0FofwcIPZ8BQoONAdKmEHNA4gwMLFBzGRqAGAANYSMjbRkjVAAAAABJRU5ErkJggg==")}',
 
         // Outer text stroke workaround for labels
         '.esit-label::before {position:absolute;-webkit-text-stroke: 4px #000;text-stroke: 4px #000;left:0;z-index:-1;}',
@@ -122,6 +135,7 @@
         '.esit-fader {transition: opacity 0.7s ease}',
         '.esit-fade {opacity: 0}',
         '.esit-hide {display:none !important;}',
+        '.esit-opaque {opacity: 1 !important;}',
         'span.esit-container>button.esit-btn>img.esit-img-reset {' + propertiesToCopy.join(":initial !important;") + ':initial !important;}',
 
         // Adjust main CSS
@@ -130,7 +144,8 @@
         '#userpage div.userpage_right {margin-left: 172px}',
         '.thumbs-user.section, #userpage .thumb {width: 156px;}',
         '#userpage .thumb_avatar :not(.esit-container) img {margin-bottom:3px}',
-        '#userpage .level-blocked {padding-left: 5px; padding-right: 5px;}'
+        '#userpage .level-blocked {padding-left: 5px; padding-right: 5px;}',
+        'span.thumb a {display: inline;}'
     ].join("\n");
 
     var style = document.createElement("style");
@@ -175,6 +190,45 @@
                 callback( new Blob( [arr], {type: type || 'image/png'} ) );
             }
         });
+    }
+    function hoverAllBlacklisted(event) {
+        if (event.ctrlKey) {
+            for (var overlay of allBlacklistOverlays) {
+                overlay.classList.add('esit-opaque');
+            }
+            for (var label of allBlacklistLabels) {
+                label.classList.add('esit-fade');
+            }
+            multiOverlayFlag = true;
+            document.removeEventListener("keydown", hoverAllBlacklisted);
+        }
+    }
+    function unhoverAllBlacklisted(event) {
+        if (multiOverlayFlag) {
+            for (var overlay of allBlacklistOverlays) {
+                overlay.classList.remove('esit-opaque');
+            }
+            for (var label of allBlacklistLabels) {
+                label.classList.remove('esit-fade');
+            }
+            multiOverlayFlag = false;
+        }
+    }
+    function checkCtrlKey(event) {
+        if (!event.ctrlKey) {
+            unhoverAllBlacklisted(event);
+            document.addEventListener("keydown", hoverAllBlacklisted);
+        }
+    }
+    function addKeyListener(event) {
+        document.addEventListener("keydown", hoverAllBlacklisted);
+        document.addEventListener("keyup", checkCtrlKey);
+    }
+    function removeKeyListener(event) {
+        if(!thumbFocused && !thumbHovered) {
+            document.removeEventListener("keydown", hoverAllBlacklisted);
+            document.removeEventListener("keyup", checkCtrlKey);
+        }
     }
 
     function createInfoThumb(pair) {
@@ -277,34 +331,53 @@
 
                     if (post.status === 'deleted') {
                         if (needsBlacklistThumb) typeLabel.classList.toggle('esit-hide');
-                        typeLabel.innerHTML = 'Deleted';
+                        typeLabel.textContent = 'Deleted';
                         typeLabel.classList.add('esit-label-deleted');
                     } else {
                         var postFileSize = document.createElement("span"),
-                            postDimensions = document.createElement("span");
+                            postDimensions = document.createElement("span"),
+                            tagIconBox = document.createElement("span");
 
                         postFileSize.className = 'esit-file-size';
                         postDimensions.className = 'esit-dimensions';
+                        tagIconBox.className = 'esit-tag-icon-box';
+
+                        var possibleSoundTags = ['sound', 'no_sound', 'sound_warning'],
+                            applicableSoundTags = [];
+                        for(var tag of post.tags) {
+                            if (possibleSoundTags.indexOf(tag) > -1) applicableSoundTags.push(tag);
+                        }
+                        if (applicableSoundTags.indexOf('sound') > -1 && applicableSoundTags.indexOf('no_sound') > -1) {
+                            tagIconBox.classList.add('esit-tag-icon-inconsistentsound');
+                        } else if (applicableSoundTags.indexOf('sound_warning') > -1) {
+                            tagIconBox.classList.add('esit-tag-icon-soundwarning');
+                        } else if (applicableSoundTags.indexOf('sound') > -1) {
+                            tagIconBox.classList.add('esit-tag-icon-sound');
+                        } else if (applicableSoundTags.indexOf('no_sound') > -1) {
+                            tagIconBox.classList.add('esit-tag-icon-nosound');
+                        }
 
                         if (needsBlacklistThumb) {
                             typeLabel.classList.add('esit-hide');
                             postFileSize.classList.add('esit-hide');
                             postDimensions.classList.add('esit-hide');
+                            tagIconBox.classList.add('esit-hide');
                         } else {
                             typeLabel.classList.add('esit-label-fade');
                         }
 
                         esitText.appendChild(postFileSize);
                         esitText.appendChild(postDimensions);
-                        postFileSize.innerHTML = formatBytes(post.file_size, useBinaryUnits);
-                        postDimensions.innerHTML = post.width + "x" + post.height;
+                        esitText.appendChild(tagIconBox);
+                        postFileSize.textContent = formatBytes(post.file_size, useBinaryUnits);
+                        postDimensions.textContent = post.width + "x" + post.height;
                         switch (post.file_ext) {
                             case 'swf':
-                                typeLabel.innerHTML = 'Flash';
+                                typeLabel.textContent = 'Flash';
                                 typeLabel.classList.add('esit-label-flash');
                                 break;
                             default:
-                                typeLabel.innerHTML = 'Video';
+                                typeLabel.textContent = 'Video';
                                 typeLabel.classList.add('esit-label-video');
                         }
                     }
@@ -312,7 +385,7 @@
 
                 if (needsBlacklistThumb) {
                     var link = document.createElement("span");
-                    link.innerHTML = 'Link';
+                    link.textContent = 'Link';
                     link.classList.add('esit-blacklist-link');
                     esitContainer.appendChild(link);
                     link.title = img.title;
@@ -329,7 +402,7 @@
 
                     var blacklistLabel = document.createElement("span");
                     blacklistLabel.className = 'esit-label esit-label-blacklist esit-label-fade';
-                    blacklistLabel.innerHTML = 'Blacklisted';
+                    blacklistLabel.textContent = 'Blacklisted';
                     esitText.appendChild(blacklistLabel);
 
                     var blacklistedFor = document.createElement("div");
@@ -343,15 +416,18 @@
 
                     esitText.appendChild(blacklistedFor);
                     esitButton.addEventListener("click", function (event) {
-                        if (event.button === 0) {
-                            event.preventDefault();
-                            thumbs.each(function(thumb) {
+                        if (event.button !== 0) {
+                            return;
+                        }
+                        event.preventDefault();
+                        var togglePreview = function (post, previewThumbs) {
+                            previewThumbs.each(function(thumb) {
                                 var thumbButton = thumb.down('.esit-btn');
                                 if (!thumbButton)
                                     return;
                                 var img = thumb.down('img.esit-img'),
-                                    toToggle = thumb.querySelectorAll('.esit-label, .esit-file-size, .esit-dimensions, .esit-blacklist-items, .esit-preview-border');
-                                if (!needsTypeThumb) {
+                                    toToggle = thumb.querySelectorAll('.esit-label, .esit-file-size, .esit-dimensions, .esit-tag-icon-box, .esit-blacklist-items, .esit-preview-border');
+                                if (post.file_ext !== 'webm' && post.file_ext !== 'swf' && post.status !== 'deleted') {
                                     var preview = thumb.down('.esit-preview');
                                     if (!preview) {
                                         preview = document.createElement("img");
@@ -382,8 +458,53 @@
                                     toToggle[i].classList.toggle('esit-hide');
                                 }
                             });
+                        };
+                        if(event.ctrlKey) {
+                            var targetThumbPreviewState = blacklistLabel.classList.contains('esit-hide');
+                            Post.posts.each(function(pair) {
+                                var post = pair.value;
+                                if (post.blacklisted.length === 0)
+                                    return;
+                                var postThumbs = $$("#p" + pair.key);
+                                if (postThumbs.length === 0)
+                                    return;
+                                var firstThumbBlacklistLabel = postThumbs[0].down('.esit-label-blacklist'),
+                                    previewState = firstThumbBlacklistLabel.classList.contains('esit-hide');
+
+                                if(targetThumbPreviewState == previewState) {
+                                    togglePreview(post, postThumbs);
+                                }
+                            });
+                        } else {
+                            togglePreview(post, thumbs);
                         }
                     });
+
+                    esitContainer.addEventListener("mouseenter", function(e) {
+                        thumbHovered = true;
+                        addKeyListener(e);
+                    });
+                    anchor.addEventListener("focusin", function(e) {
+                        thumbFocused = true;
+                        addKeyListener(e);
+                    });
+                    esitContainer.addEventListener("mouseleave", function(e) {
+                        thumbHovered = false;
+                        if(!thumbHovered && !thumbFocused) unhoverAllBlacklisted(e);
+                    });
+                    anchor.addEventListener("focusout", function(e) {
+                        thumbFocused = false;
+                        if(!thumbHovered && !thumbFocused) unhoverAllBlacklisted(e);
+                    });
+                    esitContainer.addEventListener("mouseleave", function(e) {
+                        thumbHovered = false;
+                        removeKeyListener(e);
+                    });
+                    anchor.addEventListener("focusout", function(e) {
+                        thumbFocused = false;
+                        removeKeyListener(e);
+                    });
+
                     if (thumb.classList.contains('thumb_avatar')) {
                         blacklistLabel.classList.remove('esit-label-fade');
                         var fadeOutTimer;
@@ -411,5 +532,7 @@
     }
     //timer();
     Post.posts.each(createInfoThumb);
+    allBlacklistOverlays = document.querySelectorAll('.esit-blacklist-items');
+    allBlacklistLabels = document.querySelectorAll('.esit-label-blacklist');
     //timer('All thumbs processed');
 })();
