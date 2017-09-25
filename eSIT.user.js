@@ -32,6 +32,10 @@
 
 (function() {
     'use strict';
+    var soundIconData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAzklEQVQ4T52SOwrCQBBAHQSP4T3SKrERKysbCYJYid7BA4hgK6aztQliI1h4Ldc3sgMb3BhjYJnvm5ndjLQqPudcJiJ5VVxiAYXwHwGjcWU+Aga9gwGIf4hZWKMSGEIRsIPvyulT4CkkO0syPRi/jZ6Q+FAf8R5igj3/CuqoJHdJPqCmHr4h60GfrHfbA18odEI/13b8G6TDCHhJt4EvckfOfnmcqS0CRRQeYy+a/I4EaMNJ9c2aLMAKYBddAHMy0hp922jlAjgHzIJlKKkvi6CO91QvS7EAAAAASUVORK5CYII=',
+        noSoundIconData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAHlBMVEUAAAD///////////////////////////////////8kfJuVAAAACXRSTlMAEGBwoM/Q0tPwH5urAAAAQ0lEQVQIW2NgYGBQYAADpgkQWhNCM80E0zM5Z05IFQwF05nl08C0xMxGMC0+sxAi3jEVTKcJpsH1wc1hYIbSDA5ADAAC1hcHYm+i5AAAAABJRU5ErkJggg==',
+        soundWarningIconData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAD1BMVEUAAAD///////////////+PQt5oAAAABHRSTlMAYHCgAq13pAAAAC5JREFUCFtjYGBgEGAAA0YHCC3iwOAC4rqAaRcWImgGBA3TBzeHgQkizsBgAMQAEcEJXtpC/XAAAAAASUVORK5CYII=',
+        inconsistentSoundIconData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOBAMAAADtZjDiAAAAMFBMVEUAAAD///////////////////////////////////////////////////////////87TQQwAAAAD3RSTlMAEDBgcH+AkKDAz9/g7/BQA5AnAAAATElEQVQIW2NgYGAwYAAD5g8Q2v4D0/5FQO7/DzzPXjP85///gb9gPphmM7wJphk4H0FofwcIPZ8BQoONAdKmEHNA4gwMLFBzGRqAGAANYSMjbRkjVAAAAABJRU5ErkJggg==';
 
     var userPrefUseBinaryUnits = -1; // 0 for KiB, MiB, etc.; 1 for kB, MB, etc.; any other value for auto select
     var isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0,
@@ -89,6 +93,10 @@
         '.esit-label {transition:opacity 0.35s ease 0.08s;position:relative;font-size: 18px;font-weight: bold;letter-spacing:0.5px;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;}',
         '.esit-file-size {position: absolute;bottom:2px;left:4px;font-size:14px;}',
         '.esit-dimensions {position: absolute;bottom:2px;right:4px;font-size:14px;}',
+
+        // Tag Icons
+        '.esit-tag-icon-box {position:absolute;bottom:5px;right:4px;height:14px;}',
+        //'.esit-tag-icon {}',
 
         // Outer text stroke workaround for labels
         '.esit-label::before {position:absolute;-webkit-text-stroke: 4px #000;text-stroke: 4px #000;left:0;z-index:-1;}',
@@ -327,10 +335,31 @@
                         typeLabel.classList.add('esit-label-deleted');
                     } else {
                         var postFileSize = document.createElement("span"),
-                            postDimensions = document.createElement("span");
+                            postDimensions = document.createElement("span"),
+                            tagIconBox = document.createElement("span"),
+                            soundIcon = document.createElement("img");
+
+                        var possibleSoundTags = ['sound', 'no_sound', 'sound_warning'],
+                            applicableSoundTags = [];
+                        for(var tag of post.tags) {
+                            if (possibleSoundTags.indexOf(tag) > -1) applicableSoundTags.push(tag);
+                        }
+                        if(applicableSoundTags.indexOf('sound') > -1 && applicableSoundTags.indexOf('no_sound') > -1) {
+                            soundIcon.src = inconsistentSoundIconData;
+                        } else if (applicableSoundTags.indexOf('sound_warning') > -1) {
+                            soundIcon.src = soundWarningIconData;
+                        } else if (applicableSoundTags.indexOf('sound') > -1) {
+                            soundIcon.src = soundIconData;
+                        } else if (applicableSoundTags.indexOf('no_sound') > -1) {
+                            soundIcon.src = noSoundIconData;
+                        }
+
+                        tagIconBox.appendChild(soundIcon);
 
                         postFileSize.className = 'esit-file-size';
                         postDimensions.className = 'esit-dimensions';
+                        tagIconBox.className = 'esit-tag-icon-box';
+                        postDimensions.classList.add('esit-hide');
 
                         if (needsBlacklistThumb) {
                             typeLabel.classList.add('esit-hide');
@@ -342,6 +371,7 @@
 
                         esitText.appendChild(postFileSize);
                         esitText.appendChild(postDimensions);
+                        esitText.appendChild(tagIconBox);
                         postFileSize.textContent = formatBytes(post.file_size, useBinaryUnits);
                         postDimensions.textContent = post.width + "x" + post.height;
                         switch (post.file_ext) {
