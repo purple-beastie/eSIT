@@ -364,6 +364,7 @@
                             typeLabel.classList.add('esit-hide');
                             postFileSize.classList.add('esit-hide');
                             postDimensions.classList.add('esit-hide');
+                            tagIconBox.classList.add('esit-hide');
                         } else {
                             typeLabel.classList.add('esit-label-fade');
                         }
@@ -428,7 +429,7 @@
                                 if (!thumbButton)
                                     return;
                                 var img = thumb.down('img.esit-img'),
-                                    toToggle = thumb.querySelectorAll('.esit-label, .esit-file-size, .esit-dimensions, .esit-blacklist-items, .esit-preview-border');
+                                    toToggle = thumb.querySelectorAll('.esit-label, .esit-file-size, .esit-dimensions, .esit-tag-icon-box, .esit-blacklist-items, .esit-preview-border');
                                 if (post.file_ext !== 'webm' && post.file_ext !== 'swf' && post.status !== 'deleted') {
                                     var preview = thumb.down('.esit-preview');
                                     if (!preview) {
