@@ -50,7 +50,12 @@
     var thumbCount = 0,
         thumbLimit = 1000, // maximum number of thumbs to process
         placeholderCount = 0,
-        allPlaceholders = [];
+        allPlaceholders = [],
+        allBlacklistOverlays,
+        allBlacklistLabels,
+        multiOverlayFlag = false,
+        thumbFocused = false,
+        thumbHovered = false;
     var propertiesToCopy = ["border-top-style",
                             "border-top-width",
                             "border-top-color",
@@ -122,6 +127,7 @@
         '.esit-fader {transition: opacity 0.7s ease}',
         '.esit-fade {opacity: 0}',
         '.esit-hide {display:none !important;}',
+        '.esit-opaque {opacity: 1 !important;}',
         'span.esit-container>button.esit-btn>img.esit-img-reset {' + propertiesToCopy.join(":initial !important;") + ':initial !important;}',
 
         // Adjust main CSS
@@ -176,6 +182,45 @@
                 callback( new Blob( [arr], {type: type || 'image/png'} ) );
             }
         });
+    }
+    function hoverAllBlacklisted(event) {
+        if (event.ctrlKey) {
+            for (var overlay of allBlacklistOverlays) {
+                overlay.classList.add('esit-opaque');
+            }
+            for (var label of allBlacklistLabels) {
+                label.classList.add('esit-fade');
+            }
+            multiOverlayFlag = true;
+            document.removeEventListener("keydown", hoverAllBlacklisted);
+        }
+    }
+    function unhoverAllBlacklisted(event) {
+        if (multiOverlayFlag) {
+            for (var overlay of allBlacklistOverlays) {
+                overlay.classList.remove('esit-opaque');
+            }
+            for (var label of allBlacklistLabels) {
+                label.classList.remove('esit-fade');
+            }
+            multiOverlayFlag = false;
+        }
+    }
+    function checkCtrlKey(event) {
+        if (!event.ctrlKey) {
+            unhoverAllBlacklisted(event);
+            document.addEventListener("keydown", hoverAllBlacklisted);
+        }
+    }
+    function addKeyListener(event) {
+        document.addEventListener("keydown", hoverAllBlacklisted);
+        document.addEventListener("keyup", checkCtrlKey);
+    }
+    function removeKeyListener(event) {
+        if(!thumbFocused && !thumbHovered) {
+            document.removeEventListener("keydown", hoverAllBlacklisted);
+            document.removeEventListener("keyup", checkCtrlKey);
+        }
     }
 
     function createInfoThumb(pair) {
@@ -344,15 +389,18 @@
 
                     esitText.appendChild(blacklistedFor);
                     esitButton.addEventListener("click", function (event) {
-                        if (event.button === 0) {
-                            event.preventDefault();
-                            thumbs.each(function(thumb) {
+                        if (event.button !== 0) {
+                            return;
+                        }
+                        event.preventDefault();
+                        var togglePreview = function (post, previewThumbs) {
+                            previewThumbs.each(function(thumb) {
                                 var thumbButton = thumb.down('.esit-btn');
                                 if (!thumbButton)
                                     return;
                                 var img = thumb.down('img.esit-img'),
                                     toToggle = thumb.querySelectorAll('.esit-label, .esit-file-size, .esit-dimensions, .esit-blacklist-items, .esit-preview-border');
-                                if (!needsTypeThumb) {
+                                if (post.file_ext !== 'webm' && post.file_ext !== 'swf' && post.status !== 'deleted') {
                                     var preview = thumb.down('.esit-preview');
                                     if (!preview) {
                                         preview = document.createElement("img");
@@ -383,8 +431,53 @@
                                     toToggle[i].classList.toggle('esit-hide');
                                 }
                             });
+                        };
+                        if(event.ctrlKey) {
+                            var targetThumbPreviewState = blacklistLabel.classList.contains('esit-hide');
+                            Post.posts.each(function(pair) {
+                                var post = pair.value;
+                                if (post.blacklisted.length === 0)
+                                    return;
+                                var postThumbs = $$("#p" + pair.key);
+                                if (postThumbs.length === 0)
+                                    return;
+                                var firstThumbBlacklistLabel = postThumbs[0].down('.esit-label-blacklist'),
+                                    previewState = firstThumbBlacklistLabel.classList.contains('esit-hide');
+
+                                if(targetThumbPreviewState == previewState) {
+                                    togglePreview(post, postThumbs);
+                                }
+                            });
+                        } else {
+                            togglePreview(post, thumbs);
                         }
                     });
+
+                    esitContainer.addEventListener("mouseenter", function(e) {
+                        thumbHovered = true;
+                        addKeyListener(e);
+                    });
+                    anchor.addEventListener("focusin", function(e) {
+                        thumbFocused = true;
+                        addKeyListener(e);
+                    });
+                    esitContainer.addEventListener("mouseleave", function(e) {
+                        thumbHovered = false;
+                        if(!thumbHovered && !thumbFocused) unhoverAllBlacklisted(e);
+                    });
+                    anchor.addEventListener("focusout", function(e) {
+                        thumbFocused = false;
+                        if(!thumbHovered && !thumbFocused) unhoverAllBlacklisted(e);
+                    });
+                    esitContainer.addEventListener("mouseleave", function(e) {
+                        thumbHovered = false;
+                        removeKeyListener(e);
+                    });
+                    anchor.addEventListener("focusout", function(e) {
+                        thumbFocused = false;
+                        removeKeyListener(e);
+                    });
+
                     if (thumb.classList.contains('thumb_avatar')) {
                         blacklistLabel.classList.remove('esit-label-fade');
                         var fadeOutTimer;
@@ -412,5 +505,7 @@
     }
     //timer();
     Post.posts.each(createInfoThumb);
+    allBlacklistOverlays = document.querySelectorAll('.esit-blacklist-items');
+    allBlacklistLabels = document.querySelectorAll('.esit-label-blacklist');
     //timer('All thumbs processed');
 })();
