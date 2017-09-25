@@ -95,7 +95,7 @@
         '.esit-dimensions {position: absolute;bottom:2px;right:4px;font-size:14px;}',
 
         // Tag Icons
-        '.esit-tag-icon-box {position:absolute;bottom:5px;right:4px;height:14px;}',
+        '.esit-tag-icon-box {position:absolute;top:2px;right:4px;height:14px;}',
         //'.esit-tag-icon {}',
 
         // Outer text stroke workaround for labels
@@ -359,7 +359,6 @@
                         postFileSize.className = 'esit-file-size';
                         postDimensions.className = 'esit-dimensions';
                         tagIconBox.className = 'esit-tag-icon-box';
-                        postDimensions.classList.add('esit-hide');
 
                         if (needsBlacklistThumb) {
                             typeLabel.classList.add('esit-hide');
