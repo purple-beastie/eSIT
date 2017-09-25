@@ -333,6 +333,7 @@
                         postDimensions.className = 'esit-dimensions';
 
                         if (needsBlacklistThumb) {
+                            if(thumb.classList.contains('thumb_avatar')) typeLabel.classList.add('esit-label-fade');
                             typeLabel.classList.add('esit-hide');
                             postFileSize.classList.add('esit-hide');
                             postDimensions.classList.add('esit-hide');
@@ -418,7 +419,7 @@
                                     img.classList.toggle('esit-hide');
                                     preview.classList.toggle('esit-hide');
                                     thumbButton.classList.toggle('esit-preview-bg');
-                                } else {
+                                } else if (!thumb.classList.contains('thumb_avatar')) {
                                     var typeLabel = thumb.querySelector('.esit-label:not(.esit-label-blacklist)');
                                     if (typeLabel.classList.contains('esit-label-fade')) {
                                         typeLabel.classList.remove('esit-label-fade');
